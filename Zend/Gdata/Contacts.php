@@ -29,13 +29,13 @@ class Zend_Gdata_Contacts extends Zend_Gdata {
 	const CONTACTS_MINOR_PROTOCOL_VERSION = 0;
 	
 	const CONTACTS_FEED_URI = 'https://www.google.com/m8/feeds/contacts';
-	const CONTACTS_POST_URI = 'https://www.google.com/m8/feeds/contacts/default/private/full';
+	const CONTACTS_POST_URI = 'https://www.google.com/m8/feeds/contacts/default/full';
     const AUTH_SERVICE_NAME = 'cp';
 	
 	protected $_projection = 'full';
 	protected $_visibility = 'private';
 
-	protected $_defaultPostUri = self::CONTACTS_FEED_URI;
+	protected $_defaultPostUri = self::CONTACTS_POST_URI;
 
 	public static $namespaces = array(
 		array('gd', 'http://schemas.google.com/g/2005', self::CONTACTS_MAJOR_PROTOCOL_VERSION, self::CONTACTS_MINOR_PROTOCOL_VERSION)
@@ -43,6 +43,7 @@ class Zend_Gdata_Contacts extends Zend_Gdata {
 
 	public function __construct($client = null, $applicationId = 'MyCompany-MyApp-1.0') {
 		$this->registerPackage('Zend_Gdata_Contacts');
+		$this->registerPackage('Zend_Gdata_Contacts_Extension'); // used for new* creation
 		parent::__construct($client, $applicationId);
 		
 		$this->setMajorProtocolVersion(self::CONTACTS_MAJOR_PROTOCOL_VERSION);
@@ -64,6 +65,13 @@ class Zend_Gdata_Contacts extends Zend_Gdata {
 		return $this->_projection;
 	}
 	
+	public function insertContact($contact, $uri=null) {
+        if ($uri == null) {
+            $uri = $this->_defaultPostUri;
+        }
+        $newContact = $this->insertEntry($contact, $uri, 'Zend_Gdata_Contacts_ContactEntry');
+        return $newContact;
+    }
 	
 	public function getContactListFeed() {
 		$uri = self::CONTACTS_FEED_URI . '/default/full';

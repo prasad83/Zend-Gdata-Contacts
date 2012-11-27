@@ -31,6 +31,38 @@ class Zend_Gdata_Contacts_Extension_Name extends Zend_Gdata_Contacts_Extension {
 	
 	protected $_fullName, $_namePrefix, $_givenName, $_familyName;
 
+	public function __construct($value = null) {
+        parent::__construct();
+		$this->_fullName = new Zend_Gdata_Contacts_Extension_Name_FullName($value);
+    }
+	
+	/**
+     * Retrieves a DOMElement which corresponds to this element and all
+     * child properties.  This is used to build an entry back into a DOM
+     * and eventually XML text for sending to the server upon updates, or
+     * for application storage/persistence.
+     *
+     * @param DOMDocument $doc The DOMDocument used to construct DOMElements
+     * @return DOMElement The DOMElement representing this element and all
+     * child properties.
+     */
+    public function getDOM($doc = null, $majorVersion = 1, $minorVersion = null) {
+        $element = parent::getDOM($doc, $majorVersion, $minorVersion);
+        if ($this->_fullName !== null) {
+            $element->appendChild($this->_fullName->getDOM($element->ownerDocument));
+        }
+		if ($this->_namePrefix !== null) {
+            $element->appendChild($this->_namePrefix->getDOM($element->ownerDocument));
+        }
+		if ($this->_givenName !== null) {
+            $element->appendChild($this->_givenName->getDOM($element->ownerDocument));
+        }
+		if ($this->_familyName !== null) {
+            $element->appendChild($this->_familyName->getDOM($element->ownerDocument));
+        }
+        return $element;
+    }
+	
 	/**
      * Creates individual Entry objects of the appropriate type and
      * stores them as members of this entry based upon DOM data.
@@ -67,5 +99,13 @@ class Zend_Gdata_Contacts_Extension_Name extends Zend_Gdata_Contacts_Extension {
 	
 	public function getValue() {
 		return $this->_fullName->getValue();
+	}
+	
+	public function setFullName($value) {
+		$this->_fullName = $value;
+	}
+	
+	public function getFullName() {
+		return $this->_fullName;
 	}
 }

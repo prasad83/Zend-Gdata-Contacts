@@ -19,11 +19,8 @@
  * @subpackage Contacts
  */
 
-class Zend_Gdata_Contacts_Extension_Name_GivenName extends Zend_Gdata_Contacts_Extension {
+class Zend_Gdata_Contacts_Extension_Name_GivenName extends Zend_Gdata_Contacts_ExtensionElement {
 	
 	protected $_rootElement = 'givenName';
 	
-	public function getValue() {
-		return $this->_text;
-	}
 }

@@ -20,10 +20,9 @@
  */
 require_once 'Zend/Gdata/Contacts/Extension.php';
 
-class Zend_Gdata_Contacts_Extension_Notes extends Zend_Gdata_Contacts_Extension {
-	protected $_rootElement = 'notes';
+class Zend_Gdata_Contacts_Extension_Notes extends Zend_Gdata_Contacts_ExtensionElement {
 	
-	public function getValue() {
-		return $this->_text;
-	}
+	protected $_rootNamespace = 'atom';
+	protected $_rootElement = 'content';
+	
 }

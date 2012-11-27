@@ -66,3 +66,17 @@ class Zend_Gdata_Contacts_Extension extends Zend_Gdata_Extension {
     }
 
 }
+
+class Zend_Gdata_Contacts_ExtensionElement extends Zend_Gdata_Extension {
+	
+	public function __construct($value = null) {
+        $this->registerAllNamespaces(Zend_Gdata_Contacts::$namespaces);
+        parent::__construct();
+        $this->_text = $value;
+    }
+	
+	public function getValue() {
+        return $this->_text;
+    }
+
+}

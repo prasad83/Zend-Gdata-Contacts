@@ -37,14 +37,16 @@ require_once 'Zend/Gdata/Contacts/Extension/Category.php';
 class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
 {
 	
-	protected $_address = null;
+	protected $_entryClassName = 'Zend_Gdata_Contacts_ListEntry';
+
+	protected $_addresses = null;
 	protected $_categories= null;
 	protected $_emails = null;
 	protected $_extendedProperties = null;
 	protected $_ims = null;
 	protected $_name = null;
 	protected $_notes = null;
-	protected $_orgs = null;
+	protected $_organization = null;
 	protected $_phones = null;
 
 	public function __construct($element = null) {
@@ -54,17 +56,19 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
 	
 	public function getDOM($doc = null, $majorVersion = 1, $minorVersion = null) {
         $element = parent::getDOM($doc, $majorVersion, $minorVersion);
-		if ($this->_address != null) {
-			$element->appendChild($this->_address->getDOM($element->ownerDocument));
+		if ($this->_addresses != null) {
+			foreach ($this->_addresses as $address) {
+				$element->appendChild($address->getDOM($element->ownerDocument));
+			}
 		}
 		if ($this->_categories != null) {
 			foreach ($this->_categories as $category) {
-				$element->appendChild($category->getDoM($element->ownerDocument));
+				$element->appendChild($category->getDOM($element->ownerDocument));
 			}
 		}
 		if ($this->_emails != null) {
 			foreach ($this->_emails as $email) {
-				$element->appendChild($email->getDOM($element->ownerDOcument));
+				$element->appendChild($email->getDOM($element->ownerDocument));
 			}
 		}
 		if ($this->_extendedProperties != null) {
@@ -83,16 +87,15 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
 		if ($this->_notes != null) {
 			$element->appendChild($this->_notes->getDOM($element->ownerDocument));
 		}
-		if ($this->_orgs != null) {
-			foreach ($this->_orgs as $org) {
-				$element->appendChild($org->getDOM($element->ownerDocument));
-			}
+		if ($this->_organization != null) {
+			$element->appendChild($this->_organization->getDOM($element->ownerDocument));
 		}
 		if ($this->_phones != null) {
 			foreach ($this->_phones as $phone) {
 				$element->appendChild($phone->getDOM($element->ownerDocument));
 			}
 		}
+		return $element;
 	}
 	
 	protected function takeChildFromDOM($child) {
@@ -104,7 +107,7 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
         case $gdNamespacePrefix . 'structuredPostalAddress':
             $address = new Zend_Gdata_Contacts_Extension_StructuredPostalAddress();
             $address->transferFromDOM($child);
-            $this->_address = $address;
+            $this->_addresses[] = $address;
             break;
 		case $gdNamespacePrefix . 'category':
             $category = new Zend_Gdata_Contacts_Extension_Category();
@@ -131,15 +134,16 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
             $name->transferFromDOM($child);
             $this->_name = $name;
             break;
-		case $gdNamespacePrefix . 'notes':
+		//case $gdNamespacePrefix . 'notes':
+		case $this->lookupNamespace('atom') . ':' . 'notes';
             $notes = new Zend_Gdata_Contacts_Extension_Notes();
             $notes->transferFromDOM($child);
             $this->_notes = $notes;
             break;
 		case $gdNamespacePrefix . 'organization':
-            $organization = new Zend_Gdata_Contacts_Extension_Organzation();
+            $organization = new Zend_Gdata_Contacts_Extension_Organization();
             $organization->transferFromDOM($child);
-            $this->_orgs[] = $organization;
+            $this->_organization = $organization;
             break;
 		case $gdNamespacePrefix . 'phoneNumber':
             $phoneNumber = new Zend_Gdata_Contacts_Extension_PhoneNumber();
@@ -147,7 +151,6 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
             $this->_phones[] = $phoneNumber;
             break;
         default:
-			echo "LOCALNAME: " . $child->localName . "\n";
             parent::takeChildFromDOM($child);
             break;
         }
@@ -249,20 +252,20 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
 	}
      
     /**
-     * Retrieves the Zend_Gdata_Contacts_Extension_StructuredPostalAddress item.
+     * Retrieves a list of Zend_Gdata_Contacts_Extension_StructuredPostalAddress item.
      *
      * @todo return primary first, if any
-     * @return Zend_Gdata_Contacts_Extension_StructuredPostalAddress item.
+     * @return List of Zend_Gdata_Contacts_Extension_StructuredPostalAddress item.
      */
-    public function getAddress() {
-		return $this->_address;
+    public function getAddresses() {
+		return $this->_addresses;
 	}
      
     /**
-     * @param mixed $value Zend_Gdata_Contacts_Extension_StructuredPostalAddress item
+     * @param mixed $value List of Zend_Gdata_Contacts_Extension_StructuredPostalAddress item
      */
-    public function setAddress($value) {
-		$this->_address = $value;
+    public function setAddresses($values) {
+		$this->_addresses = $values;
 		return $this;
 	}
      

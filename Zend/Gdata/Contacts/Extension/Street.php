@@ -20,7 +20,7 @@
  */
 require_once 'Zend/Gdata/Contacts/Extension.php';
 
-class Zend_Gdata_Contacts_Extension_Street extends Zend_Gdata_Contacts_Extension {
+class Zend_Gdata_Contacts_Extension_Street extends Zend_Gdata_Contacts_ExtensionElement {
 	protected $_rootElement = 'street';
 	
 }

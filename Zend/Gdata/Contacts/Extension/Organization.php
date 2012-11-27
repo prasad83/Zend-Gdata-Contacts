@@ -23,10 +23,34 @@ require_once 'Zend/Gdata/Contacts/Extension.php';
 require_once 'Zend/Gdata/Contacts/Extension/OrgName.php';
 require_once 'Zend/Gdata/Contacts/Extension/OrgTitle.php';
 
-class Zend_Gdata_Contacts_Extension_Organzation extends Zend_Gdata_Contacts_Extension {
+class Zend_Gdata_Contacts_Extension_Organization extends Zend_Gdata_Contacts_Extension {
 	protected $_rootElement = 'organization';
-	
+
+	protected $_rel;
 	protected $_orgName, $_orgTitle;
+	
+	public function __construct($name = null, $title = null, $rel = 'other') {
+		parent::__construct();
+		$this->_rel = $rel;
+		if ($name != null) {
+			$this->_orgName = new Zend_Gdata_Contacts_Extension_OrgName($name);
+		}
+		if ($title != null) {
+			$this->_orgTitle= new Zend_Gdata_Contacts_Extension_OrgTitle($title);
+		}
+	}
+	
+	public function getDOM($doc = null, $majorVersion = 1, $minorVersion = null) {
+		$element = parent::getDOM($doc, $majorVersion, $minorVersion);
+		$element->setAttribute('rel', $this->lookupNamespace('gd').'#'.$this->_rel);
+		if ($this->_orgName != null) {
+			$element->appendChild($this->_orgName->getDOM($element->ownerDocument));
+		}
+		if ($this->_orgTitle != null) {
+			$element->appendChild($this->_orgTitle->getDOM($element->ownerDocument));
+		}
+		return $element;
+	}
 	
 	/**
      * Creates individual Entry objects of the appropriate type and

@@ -26,7 +26,26 @@ require_once 'Zend/Gdata/Contacts/Extension/Street.php';
 class Zend_Gdata_Contacts_Extension_StructuredPostalAddress extends Zend_Gdata_Contacts_Extension {
 	protected $_rootElement = 'structuredPostalAddress';
 	
+	protected $_rel;
 	protected $_formattedAddress, $_street;
+	
+	public function __construct($value = null, $rel = 'work') {
+        parent::__construct();
+		$this->_rel = $rel;
+		$this->_formattedAddress = new Zend_Gdata_Contacts_Extension_FormattedAddress($value);
+    }
+	
+	public function getDOM($doc = null, $majorVersion = 1, $minorVersion = null) {
+		$element = parent::getDOM($doc, $majorVersion, $minorVersion);
+		$element->setAttribute("rel", $this->lookupNamespace("gd").'#'.$this->_rel);
+		if ($this->_formattedAddress != null) {
+			$element->appendChild($this->_formattedAddress->getDOM($element->ownerDocument));
+		}
+		if ($this->_street != null) {
+			$element->appendChild($this->_street->getDOM($element->ownerDocument));
+		}
+		return $element;
+	}
 	
 	/**
      * Creates individual Entry objects of the appropriate type and
@@ -53,9 +72,16 @@ class Zend_Gdata_Contacts_Extension_StructuredPostalAddress extends Zend_Gdata_C
     }
 	
 	public function getValue() {
-		return $this->_orgName->getValue();
+		return $this->_formattedAddress->getValue();
 	}
 	
+	public function __toString() {
+		$string = $this->_formattedAddress->__toString();
+		if ($this->_street != null) $string .= "\n" . $this->_street->__toString();
+		return trim($string);
+	}
+
+
 	public function setFormattedAddress($value) {
 		$this->_formattedAddress = $value;
 		return $this;
